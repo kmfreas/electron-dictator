@@ -1,0 +1,14 @@
+$orange:       hsl(14,  100%, 53%) !default;
+$yellow:       hsl(48,  100%, 67%) !default;
+$green:        hsl(141, 71%,  48%) !default;
+$turquoise:    #3498DB;
+$cyan:         hsl(204, 86%,  53%) !default;
+$blue:         hsl(217, 71%,  53%) !default;
+$purple:       hsl(271, 100%, 71%) !default;
+$red:          #E74C3C;
+$dark: #2C3E50;
+$light: #ECF0F1;
+$text: $light;
+$body-color: $light;
+$title-color: #fff;
+$subtitle-color: mix($title-color, $dark, 50);
