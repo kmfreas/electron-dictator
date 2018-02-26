@@ -11,6 +11,16 @@ export default new Router({
       component: require('@/components/LandingPage').default,
     },
     {
+      path: '/recordings',
+      name: 'recordings',
+      component: require('@/components/Recordings').default,
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: require('@/components/Settings').default,
+    },
+    {
       path: '*',
       redirect: '/',
     },
