@@ -56,7 +56,11 @@ const Database = {
         Database.db.options.find({
           field,
         }, (err, docs) => {
-          resolve(docs[0].value);
+          if (docs.length && docs[0].value) {
+            resolve(docs[0].value);
+          } else {
+            resolve('');
+          }
         });
       });
     },
