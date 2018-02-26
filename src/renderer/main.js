@@ -11,6 +11,10 @@ import App from './App';
 import router from './router';
 import store from './store';
 
+import database from './api/database';
+
+database.init();
+
 
 fontawesome.library.add(faPlay, faPause, faStop);
 

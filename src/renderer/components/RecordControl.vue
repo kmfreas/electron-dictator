@@ -1,6 +1,12 @@
 <template>
   <div>
     <h1 class="title">Record audio</h1>
+    <div class="field">
+      <div class="control">
+        <input class="input" type="text" v-model="title" placeholder="Recording Title">
+      </div>
+    </div>
+
     <button class="button is-success" :class="{'is-danger': recording}" @click="handle">
       <span class="icon is-small">
         <font-awesome-icon :icon="icon" />
@@ -24,6 +30,7 @@ export default {
     return {
       recording: false,
       file: null,
+      title: '',
     };
   },
   computed: {
@@ -45,7 +52,7 @@ export default {
       this.file = Record.getPath();
     },
     stop() {
-      Record.stop();
+      Record.stop(this.title);
     },
   },
 };
