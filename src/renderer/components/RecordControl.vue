@@ -6,11 +6,15 @@
         <font-awesome-icon :icon="icon" />
       </span>
     </button>
+    <p>
+      Saving file to {{file}}
+    </p>
   </div>
 </template>
 
 <script>
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome';
+import Record from '../api/record';
 
 export default {
   components: {
@@ -19,6 +23,7 @@ export default {
   data() {
     return {
       recording: false,
+      file: null,
     };
   },
   computed: {
@@ -28,17 +33,19 @@ export default {
   },
   methods: {
     handle() {
+      this.recording = !this.recording;
       if (this.recording) {
         this.start();
       } else {
         this.stop();
       }
-      this.recording = !this.recording;
     },
     start() {
+      Record.start();
+      this.file = Record.getPath();
     },
     stop() {
-
+      Record.stop();
     },
   },
 };
