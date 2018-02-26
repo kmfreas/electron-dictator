@@ -11,6 +11,11 @@ const Database = {
       autoload: true,
       timestampData: true,
     });
+    this.db.options = new Datastore({
+      filename: path.join(remote.app.getPath('userData'), '/options.db'),
+      autoload: true,
+      timestampData: true,
+    });
   },
   recordings: {
     insert(title, file) {
@@ -24,6 +29,34 @@ const Database = {
       return new Promise((resolve) => {
         Database.db.recordings.find({}, (err, docs) => {
           resolve(docs);
+        });
+      });
+    },
+  },
+  options: {
+    update(field, value) {
+      this.get(field).then((data) => {
+        if (data.length) {
+          Database.db.options.update({
+            field,
+          }, {
+            field,
+            value,
+          });
+        } else {
+          Database.db.options.insert({
+            field,
+            value,
+          });
+        }
+      });
+    },
+    get(field) {
+      return new Promise((resolve) => {
+        Database.db.options.find({
+          field,
+        }, (err, docs) => {
+          resolve(docs[0].value);
         });
       });
     },
