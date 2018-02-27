@@ -1,5 +1,5 @@
 {
-  "name": "electron-dictator",
+  "name": "electron-transcriber",
   "version": "0.0.0",
   "author": "krez <kmfreas@gmail.com>",
   "description": "A tool to transcribe audio from meetings",
@@ -22,7 +22,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "electron-dictator",
+    "productName": "electron-transcriber",
     "appId": "org.simulatedgreg.electron-vue",
     "directories": {
       "output": "build"

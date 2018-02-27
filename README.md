@@ -1,4 +1,4 @@
-# electron-dictator
+# electron-transcriber
 
 > A tool to transcribe audio from meetings
 

@@ -4,7 +4,7 @@
       <div class="navbar-menu is-active">
         <div class="navbar-start">
           <div class="navbar-item">
-            <router-link to="/">Dictator</router-link>
+            <router-link to="/">Transcriber</router-link>
           </div>
         </div>
         <div class="navbar-end">
@@ -32,7 +32,7 @@
 import router from './router';
 import setup from './setup';
 export default {
-  name: 'electron-dictator',
+  name: 'electron-transcriber',
   data() {
     return {
       errors: null,
