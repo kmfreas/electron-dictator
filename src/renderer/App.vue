@@ -50,7 +50,7 @@
     name: 'electron-transcriber',
     data: () => ({
       clipped: true,
-      drawer: true,
+      drawer: false,
       fixed: false,
       items: [
         { icon: 'record_voice_over', title: 'Record', to: '/' },
