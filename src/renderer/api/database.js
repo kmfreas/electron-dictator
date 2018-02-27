@@ -18,10 +18,11 @@ const Database = {
     });
   },
   recordings: {
-    insert(title, file) {
+    insert(title, audioFile, textFile) {
       const item = {
         title,
-        file,
+        audioFile,
+        textFile,
       };
       Database.db.recordings.insert(item);
     },
