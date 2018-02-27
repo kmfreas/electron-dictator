@@ -19,6 +19,9 @@
     </nav>
     <div class="section">
       <div class="container">
+        <div v-for="error in errors" :key="error" class="notification is-warning">
+          {{error}} Please add it in the settings page.
+        </div>
         <router-view></router-view>
       </div>
     </div>
@@ -26,8 +29,32 @@
 </template>
 
 <script>
+import router from './router';
+import setup from './setup';
 export default {
   name: 'electron-dictator',
+  data() {
+    return {
+      errors: null,
+    };
+  },
+  mounted() {
+    this.checkConfig();
+    router.afterEach((to) => {
+      if (to.name !== 'settings') {
+        this.checkConfig();
+      } else {
+        this.errors = null;
+      }
+    });
+  },
+  methods: {
+    checkConfig() {
+      setup.verify().then((errors) => {
+        this.errors = errors;
+      });
+    },
+  },
 };
 </script>
 
