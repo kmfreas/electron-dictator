@@ -63,7 +63,7 @@ export default {
     save() {
       Database.options.update('speech_project_id', this.projectId);
       if (this.file && this.file.path) {
-        fs.createReadStream(this.file.path).pipe(fs.createWriteStream(path.join(remote.app.getPath('userData'), '/credentials.json')));
+        fs.createReadStream(this.file.path).pipe(fs.createWriteStream(path.join(remote.app.getPath('userData'), '/user-config/credentials.json')));
       }
     },
   },
