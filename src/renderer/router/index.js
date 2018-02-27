@@ -7,13 +7,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'welcome-view',
-      component: require('@/components/WelcomeView').default,
+      name: 'record-view',
+      component: require('@/components/RecordView').default,
     },
     {
-      path: '/inspire',
-      name: 'inspire',
-      component: require('@/components/InspireView').default,
+      path: '/about',
+      name: 'about',
+      component: require('@/components/AboutView').default,
     },
     {
       path: '*',
