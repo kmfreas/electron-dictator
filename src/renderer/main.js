@@ -6,6 +6,7 @@ import 'vuetify/dist/vuetify.css';
 import App from './App';
 import router from './router';
 import store from './store';
+import './js/setup';
 
 Vue.use(Vuetify);
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
