@@ -7,12 +7,12 @@ const Database = {
   db: {},
   init() {
     this.db.recordings = new Datastore({
-      filename: path.join(remote.app.getPath('userData'), '/recordings.db'),
+      filename: path.join(remote.app.getPath('userData'), '/user-config/recordings.db'),
       autoload: true,
       timestampData: true,
     });
     this.db.options = new Datastore({
-      filename: path.join(remote.app.getPath('userData'), '/options.db'),
+      filename: path.join(remote.app.getPath('userData'), '/user-config/options.db'),
       autoload: true,
       timestampData: true,
     });
