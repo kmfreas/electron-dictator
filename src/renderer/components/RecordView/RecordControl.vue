@@ -1,5 +1,8 @@
 <template>
   <v-card>
+    <v-toolbar color="cyan" dark>
+      <v-toolbar-title>Record</v-toolbar-title>
+    </v-toolbar>
     <v-card-text>
       <v-text-field
         name="input-1"
@@ -9,12 +12,15 @@
       ></v-text-field>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
-      {{duration}}
       <v-btn :color="buttonColor" icon dark @click="handle">
         <v-icon dark>{{icon}}</v-icon>
       </v-btn>
+      {{duration}}
     </v-card-actions>
+    <v-snackbar :timeout="6000" :top="true" v-model="showSnackbar">
+      Recording saved
+      <v-btn flat color="primary" @click.native="showSnackbar = false">Close</v-btn>
+    </v-snackbar>
   </v-card>
 </template>
 
@@ -29,6 +35,7 @@ export default {
       title: null,
       timer: new Easytimer(),
       duration: null,
+      showSnackbar: false,
     };
   },
   computed: {
@@ -61,6 +68,8 @@ export default {
     stop() {
       this.timer.stop();
       Record.stop(this.title);
+      this.showSnackbar = true;
+      this.duration = null;
     },
   },
 };
