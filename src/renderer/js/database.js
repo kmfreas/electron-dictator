@@ -20,11 +20,11 @@ const Database = {
   recordings: {
     insert(title, audioFile, textFile) {
       return new Promise((resolve) => {
-      const item = {
-        title,
-        audioFile,
-        textFile,
-      };
+        const item = {
+          title,
+          audioFile,
+          textFile,
+        };
         Database.db.recordings.insert(item, (err, doc) => {
           if (err) throw err;
           resolve(doc);
@@ -33,7 +33,7 @@ const Database = {
     },
     all() {
       return new Promise((resolve) => {
-        Database.db.recordings.find({}, (err, docs) => {
+        Database.db.recordings.find({}).sort({ createdAt: -1 }).exec((err, docs) => {
           resolve(docs);
         });
       });
