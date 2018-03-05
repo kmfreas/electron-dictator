@@ -13,12 +13,11 @@
           Create a project on Google Cloud Console and enable the speech API. <v-icon style="cursor:pointer; vertical-align: text-top" class="body-1" color="primary" @click="open('https://cloud.google.com/speech/docs/quickstart')">open_in_new</v-icon>
         </p>
         <p>
-          Create a service account key and add the key and project id below. <v-icon style="cursor:pointer; vertical-align: text-top" class="body-1" color="primary" @click="open('https://console.cloud.google.com/apis/credentials/serviceaccountkey')">open_in_new</v-icon>
+          Create a service account key and add the key below. <v-icon style="cursor:pointer; vertical-align: text-top" class="body-1" color="primary" @click="open('https://console.cloud.google.com/apis/credentials/serviceaccountkey')">open_in_new</v-icon>
         </p>
         <p class="headline mb-0">Add Credentials</p>
         <v-form v-model="valid" ref="form" lazy-validation>
           <file-input @fileAdded="handleFile" v-model="fileName" label="Google Speech Service Account Key File" :required="true" :rules="fileNameRules" accept=".json"></file-input>
-          <v-text-field prepend-icon="vpn_key" label="Google Speech Project ID" v-model="projectId" :rules="projectIdRules" required></v-text-field>
         </v-form>
       </v-card-text>
     </v-slide-y-transition>
@@ -33,7 +32,7 @@
         Cancel
       </v-btn>
     </v-card-actions>
-    <v-snackbar :timeout="6000" :top="true" v-model="showSnackbar">
+    <v-snackbar :timeout="6000" :bottom="true" v-model="showSnackbar">
       Settings saved
       <v-btn flat color="primary" @click.native="showSnackbar = false">Close</v-btn>
     </v-snackbar>
@@ -43,6 +42,7 @@
 <script>
 import FileInput from './elements/FileInput';
 import Credentials from '../js/credentials';
+import Record from '../js/record';
 
 export default {
   components: {
@@ -52,12 +52,8 @@ export default {
     return {
       file: null,
       fileName: null,
-      projectId: null,
       fileNameRules: [
         v => !!v || 'Credentials file is required. Must be a .json file',
-      ],
-      projectIdRules: [
-        v => !!v || 'Project ID is required',
       ],
       showSnackbar: false,
       valid: true,
@@ -67,10 +63,8 @@ export default {
   },
   mounted() {
     Credentials.check().then((errors) => {
-      console.log(errors);
       this.show = !!errors.length;
       this.credentialsValid = !this.show;
-      console.log(this.show, this.credentialsValid);
     });
   },
   methods: {
@@ -84,10 +78,11 @@ export default {
       }
 
       if (this.$refs.form.validate()) {
-        Credentials.save(this.file, this.projectId);
+        Credentials.save(this.file);
         this.showSnackbar = true;
         this.show = false;
         this.credentialsValid = true;
+        Record.init();
       }
     },
     open(link) {

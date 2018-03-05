@@ -12,14 +12,11 @@ export default {
   client: null,
   init() {
     const credentials = path.join(remote.app.getPath('userData'), '/user-config/credentials.json');
-    Database.options.get('speech_project_id').then((id) => {
-      if (fs.existsSync(credentials)) {
-        this.client = new speech.SpeechClient({
-          projectId: id,
-          keyFilename: credentials,
-        });
-      }
-    });
+    if (fs.existsSync(credentials)) {
+      this.client = new speech.SpeechClient({
+        keyFilename: credentials,
+      });
+    }
   },
   getPath() {
     return path.join(remote.app.getPath('userData'), `/recordings/${this.currentFileName}`);
@@ -41,7 +38,9 @@ export default {
     }
     record.stop();
     Database.recordings.insert(dbTitle, `${this.getPath()}.wav`, `${this.getPath()}.txt`);
-    this.getTranscription();
+    if (this.client !== null) {
+      this.getTranscription();
+    }
   },
   getTranscription() {
     this.client
