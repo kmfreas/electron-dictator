@@ -22,6 +22,7 @@
 <script>
 import moment from 'moment';
 import Database from '../../js/database';
+import Bus from '../../js/bus';
 
 export default {
   data() {
@@ -31,6 +32,7 @@ export default {
   },
   mounted() {
     this.getRecordings();
+    Bus.$on('recordingSaved', this.getRecordings);
   },
   filters: {
     date(val) {

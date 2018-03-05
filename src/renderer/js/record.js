@@ -5,6 +5,7 @@ import fs from 'fs';
 import record from 'node-record-lpcm16';
 import moment from 'moment';
 import Database from './database';
+import Bus from './bus';
 const speech = require('@google-cloud/speech');
 
 export default {
@@ -37,10 +38,12 @@ export default {
       dbTitle = this.currentFileName;
     }
     record.stop();
-    Database.recordings.insert(dbTitle, `${this.getPath()}.wav`, `${this.getPath()}.txt`);
+    Database.recordings.insert(dbTitle, `${this.getPath()}.wav`, `${this.getPath()}.txt`).then((doc) => {
+      Bus.$emit('recordingSaved');
     if (this.client !== null) {
       this.getTranscription();
     }
+    });
   },
   getTranscription() {
     this.client
