@@ -55,6 +55,7 @@
       items: [
         { icon: 'record_voice_over', title: 'Record', to: '/' },
         { icon: 'info', title: 'About', to: '/about' },
+        { icon: 'settings', title: 'Settings', to: '/settings' },
       ],
       miniVariant: true,
       title: 'Transcriber',
