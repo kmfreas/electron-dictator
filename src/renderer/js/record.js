@@ -11,6 +11,7 @@ const speech = require('@google-cloud/speech');
 export default {
   currentFileName: '',
   client: null,
+  bucket: null,
   init() {
     const credentials = path.join(remote.app.getPath('userData'), '/user-config/credentials.json');
     if (fs.existsSync(credentials)) {
@@ -18,6 +19,9 @@ export default {
         keyFilename: credentials,
       });
     }
+    Database.options.get('bucket_name').then((name) => {
+      this.bucket = name;
+    });
   },
   getPath() {
     return path.join(remote.app.getPath('userData'), `/recordings/${this.currentFileName}`);

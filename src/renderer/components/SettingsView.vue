@@ -19,6 +19,7 @@
           <p class="headline mb-0">Add Credentials</p>
           <v-form v-model="valid" ref="form" lazy-validation>
             <file-input @fileAdded="handleFile" v-model="fileName" label="Google Speech Service Account Key File" :required="true" :rules="fileNameRules" accept=".json"></file-input>
+            <v-text-field prepend-icon="vpn_key" label="Google Cloud Storage Bucket Name" v-model="bucketName" :rules="bucketNameRules" required></v-text-field>
           </v-form>
         </v-card-text>
       </v-slide-y-transition>
@@ -54,8 +55,12 @@ export default {
     return {
       file: null,
       fileName: null,
+      bucketName: null,
       fileNameRules: [
         v => !!v || 'Credentials file is required. Must be a .json file',
+      ],
+      bucketNameRules: [
+        v => !!v || 'BucketName is required',
       ],
       showSnackbar: false,
       valid: true,
@@ -80,7 +85,7 @@ export default {
       }
 
       if (this.$refs.form.validate()) {
-        Credentials.save(this.file);
+        Credentials.save(this.file, this.bucketName);
         this.showSnackbar = true;
         this.show = false;
         this.credentialsValid = true;
