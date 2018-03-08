@@ -23,29 +23,31 @@ export default {
     return path.join(remote.app.getPath('userData'), `/recordings/${this.currentFileName}`);
   },
   start() {
-    this.currentFileName = moment().format();
+    this.currentFileName = moment().format('x');
     const fileName = `${this.getPath()}.wav`;
     const file = fs.createWriteStream(fileName, { encoding: 'binary' });
 
     record.start({
       sampleRate: 44100,
       verbose: true,
+      threshold: 0,
     }).pipe(file);
   },
-  stop(title) {
+  stop(title, duration) {
     let dbTitle = title;
     if (!dbTitle) {
-      dbTitle = this.currentFileName;
+      dbTitle = 'Untitled';
     }
     record.stop();
-    Database.recordings.insert(dbTitle, `${this.getPath()}.wav`, `${this.getPath()}.txt`).then((doc) => {
+    Database.recordings.insert(dbTitle, `${this.getPath()}.wav`, `${this.getPath()}.txt`, duration).then((doc) => {
       Bus.$emit('recordingSaved');
-    if (this.client !== null) {
-      this.getTranscription();
-    }
+      if (this.client !== null) {
+        // eslint-disable-next-line no-underscore-dangle
+        this.getTranscription(doc._id);
+      }
     });
   },
-  getTranscription() {
+  getTranscription(id) {
     this.client
       .longRunningRecognize({
         config: {
@@ -68,6 +70,7 @@ export default {
           .join('\n');
         fs.writeFile(`${this.getPath()}.txt`, transcription, (error) => {
           if (error) throw error;
+          Bus.$emit('transcriptionSaved', id);
         });
       })
       .catch();

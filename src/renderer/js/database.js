@@ -18,12 +18,13 @@ const Database = {
     });
   },
   recordings: {
-    insert(title, audioFile, textFile) {
+    insert(title, audioFile, textFile, duration) {
       return new Promise((resolve) => {
         const item = {
           title,
           audioFile,
           textFile,
+          duration,
         };
         Database.db.recordings.insert(item, (err, doc) => {
           if (err) throw err;
