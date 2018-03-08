@@ -1,7 +1,5 @@
 <template>
-  <v-layout column justify-center>
-    <v-flex style="height: 100%">
-      <div class="main">
+      <record-control></record-control>
         <record-list></record-list>
       </div>
     </v-flex>
@@ -16,11 +14,13 @@ import { mapActions } from 'vuex';
 import Bus from '../js/bus';
 import RecordControl from './RecordView/RecordControl';
 import RecordList from './RecordView/RecordList';
+import RecordPlayer from './RecordView/RecordPlayer';
 
 export default {
   components: {
     RecordControl,
     RecordList,
+    RecordPlayer,
   mounted() {
     this.getRecordings();
     Bus.$on('recordingSaved', this.getRecordings);

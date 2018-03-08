@@ -64,6 +64,7 @@
     "nedb": "^1.8.0",
     "node-record-lpcm16": "^0.3.0",
     "vue": "^2.4.2",
+    "vue-aplayer": "^1.0.4",
     "vue-electron": "^1.0.6",
     "vue-router": "^2.5.3",
     "vuetify": "1.0.0",
