@@ -21,30 +21,28 @@
 
 <script>
 import moment from 'moment';
-import Database from '../../js/database';
-import Bus from '../../js/bus';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  data() {
-    return {
-      recordings: [],
-    };
-  },
   mounted() {
-    this.getRecordings();
-    Bus.$on('recordingSaved', this.getRecordings);
+    if (this.recordings.length) {
+      this.playRecord(0);
+    }
   },
   filters: {
     date(val) {
-      return moment(val).format('dddd, MMMM Do YYYY, h:mm:ss a');
+      return moment(val).fromNow();
     },
   },
+  computed: {
+    ...mapGetters({
+      recordings: 'getRecordings',
+    }),
+  },
   methods: {
-    getRecordings() {
-      Database.recordings.all().then((all) => {
-        this.recordings = all;
-      });
-    },
+    ...mapActions({
+      playRecord: 'loadRecording',
+    }),
   },
 };
 </script>

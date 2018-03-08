@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+import Bus from '../js/bus';
 import RecordControl from './RecordView/RecordControl';
 import RecordList from './RecordView/RecordList';
 
@@ -19,6 +21,14 @@ export default {
   components: {
     RecordControl,
     RecordList,
+  mounted() {
+    this.getRecordings();
+    Bus.$on('recordingSaved', this.getRecordings);
+  },
+  methods: {
+    ...mapActions({
+      getRecordings: 'getRecordings',
+    }),
   },
 };
 </script>
