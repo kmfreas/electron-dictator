@@ -1,17 +1,27 @@
 <template>
-  <v-card>
-    <v-toolbar color="cyan" dark>
-      <v-toolbar-title>Your Recordings</v-toolbar-title>
-    </v-toolbar>
-    <v-list two-line>
-      <template v-for="record in recordings">
-        <v-list-tile avatar :key="record._id">
+  <v-card class="record-list" height="100%">
+    <v-list class="record-list__list">
+      <template v-for="(record, index) in recordings">
+        <v-list-tile avatar :key="record._id" @click="playRecord(index)">
           <v-list-tile-action>
-            <v-icon dark>play_circle_filled</v-icon>
+            <v-icon v-if="!record.active" :color="record.active ? 'primary' : 'blue-grey'">
+              {{record.active ? 'play_circle_outline' : 'play_arrow'}}
+            </v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title>{{record.title}}</v-list-tile-title>
-            <v-list-tile-sub-title>{{record.createdAt | date}}</v-list-tile-sub-title>
+            <v-list-tile-title>
+              <div class="record-list__content">
+                <div class="record-list__title pr-3">
+                  {{record.title}}
+                </div>
+                <div class="record-list__date px-3">
+                  {{record.createdAt | date}}
+                </div>
+                <div class="record-list__duration pl-3">
+                  {{record.duration}}
+                </div>
+              </div>
+            </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
       </template>
@@ -46,3 +56,52 @@ export default {
   },
 };
 </script>
+
+<style>
+.record-list {
+  position: relative;
+  overflow-y: auto;
+}
+
+.record-list::-webkit-scrollbar {
+  width: 5px;
+}
+ 
+.record-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.record-list::-webkit-scrollbar-thumb {
+  opacity: 0;
+  transition: opacity 1s;
+}
+ 
+.record-list:hover::-webkit-scrollbar-thumb {
+  border-left: 2px solid #3498db;
+  opacity: 1;
+}
+
+.record-list__list {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+.record-list__content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.record-list__title {
+  width: 50%;
+}
+.record-list__date {
+  width: 30%;
+}
+.record-list__duration {
+  text-align: right;
+  width: 20%;
+}
+
+</style>

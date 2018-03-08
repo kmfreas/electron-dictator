@@ -1,10 +1,20 @@
 <template>
+  <v-layout column justify-center fill-height>
+    <v-flex>
       <record-control></record-control>
-        <record-list></record-list>
-      </div>
+    </v-flex>
+    <v-flex fill-height d-flex>
+      <v-layout row wrap style="height: auto !important;">
+        <v-flex xs12 sm6>
+          <record-transcript></record-transcript>
+        </v-flex>
+        <v-flex xs12 sm6>
+          <record-list></record-list>
+        </v-flex>
+      </v-layout>
     </v-flex>
     <v-flex class="sub-footer">
-      <record-control></record-control>
+      <record-player></record-player>
     </v-flex>
   </v-layout>
 </template>
@@ -37,11 +47,11 @@ export default {
 </script>
 
 <style>
-.sub-footer {
+/* .sub-footer {
   align-self: flex-end;
   width: 100%;
   flex: 0;
-}
+} */
 
 .main {
   display: flex;
@@ -50,6 +60,8 @@ export default {
   align-items: center;
   height: 100%;
 }
+
+.main
 
 .main .card {
   width: 100%;    

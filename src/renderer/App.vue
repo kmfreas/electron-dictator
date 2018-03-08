@@ -31,7 +31,7 @@
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-content>
-        <v-container fluid fill-height>
+        <v-container fluid fill-height grid-list-xl>
           <v-slide-y-transition mode="out-in">
             <router-view></router-view>
           </v-slide-y-transition>
@@ -66,4 +66,7 @@
 <style>
   @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons');
   /* Global CSS */
+.button--huge {
+  height: 88px;
+}
 </style>

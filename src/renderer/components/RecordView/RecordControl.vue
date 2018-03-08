@@ -6,6 +6,7 @@
       </v-btn>
       <input type="text" placeholder="Title" v-model="title" class="record-control__title py-2 px-3" maxlength="70">
       <span class="px-2">{{duration}}</span>
+      <span v-if="!credentialsValid && recording">Not saving transcript. Enter your credentials in the settings page.</span>
     </v-card-actions>
     <v-snackbar :timeout="6000" :bottom="true" :right="true" v-model="showSnackbar">
       Recording saved
@@ -68,9 +69,10 @@ export default {
     },
     stop() {
       this.timer.stop();
-      Record.stop(this.title);
+      Record.stop(this.title, this.duration);
       this.showSnackbar = true;
       this.duration = null;
+      this.title = null;
     },
   },
 };
