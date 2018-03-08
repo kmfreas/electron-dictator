@@ -14,13 +14,16 @@ import { mapActions } from 'vuex';
 import Bus from '../js/bus';
 import RecordControl from './RecordView/RecordControl';
 import RecordList from './RecordView/RecordList';
+import RecordTranscript from './RecordView/RecordTranscript';
 import RecordPlayer from './RecordView/RecordPlayer';
 
 export default {
   components: {
     RecordControl,
     RecordList,
+    RecordTranscript,
     RecordPlayer,
+  },
   mounted() {
     this.getRecordings();
     Bus.$on('recordingSaved', this.getRecordings);
