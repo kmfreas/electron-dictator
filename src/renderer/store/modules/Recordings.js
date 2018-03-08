@@ -50,7 +50,6 @@ const actions = {
       fs.readFile(record.audioFile),
       fs.readFile(record.textFile, 'utf8'),
     ]).then(([audio, text]) => {
-      console.log(audio, text);
       const blob = new window.Blob([new Uint8Array(audio)]);
       record.url = URL.createObjectURL(blob);
       record.transcript = text;
