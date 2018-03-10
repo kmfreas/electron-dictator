@@ -19,6 +19,9 @@ const getters = {
   getCurrentRecording() {
     return state.currentRecording;
   },
+  getProcessingRecordings() {
+    return state.recordings.filter(r => r.processing);
+  },
 };
 
 const mutations = {
@@ -38,6 +41,7 @@ const actions = {
       Database.recordings.all().then((all) => {
         all.forEach((r) => {
           r.active = false;
+          r.error = false;
         });
         context.commit('saveRecordings', all);
         resolve();
@@ -46,6 +50,11 @@ const actions = {
   },
   loadRecording(context, index) {
     const record = state.recordings[index];
+    console.log(record);
+    fs.readFile(record.textFile, 'utf8', (err, test) => {
+      console.log(err, test);
+    });
+
     Promise.all([
       fs.readFile(record.audioFile),
       fs.readFile(record.textFile, 'utf8'),
@@ -53,8 +62,9 @@ const actions = {
       const blob = new window.Blob([new Uint8Array(audio)]);
       record.url = URL.createObjectURL(blob);
       record.transcript = text;
-      // fs.readFile()
       context.commit('setCurrentRecording', record);
+    }, (error1, error) => {
+      console.log(error1, error);
     });
   },
 };

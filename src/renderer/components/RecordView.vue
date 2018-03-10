@@ -3,6 +3,7 @@
     <v-flex>
       <record-control></record-control>
     </v-flex>
+    <record-notifications></record-notifications>
     <v-flex fill-height d-flex>
       <v-layout row wrap style="height: auto !important;">
         <v-flex xs12 sm6>
@@ -23,6 +24,7 @@
 import { mapActions } from 'vuex';
 import Bus from '../js/bus';
 import RecordControl from './RecordView/RecordControl';
+import RecordNotifications from './RecordView/RecordNotifications';
 import RecordList from './RecordView/RecordList';
 import RecordTranscript from './RecordView/RecordTranscript';
 import RecordPlayer from './RecordView/RecordPlayer';
@@ -30,6 +32,7 @@ import RecordPlayer from './RecordView/RecordPlayer';
 export default {
   components: {
     RecordControl,
+    RecordNotifications,
     RecordList,
     RecordTranscript,
     RecordPlayer,
@@ -37,22 +40,20 @@ export default {
   mounted() {
     this.getRecordings();
     Bus.$on('recordingSaved', this.getRecordings);
+    Bus.$on('processError', this.handleError);
   },
   methods: {
     ...mapActions({
       getRecordings: 'getRecordings',
     }),
+    handleError() {
+
+    },
   },
 };
 </script>
 
 <style>
-/* .sub-footer {
-  align-self: flex-end;
-  width: 100%;
-  flex: 0;
-} */
-
 .main {
   display: flex;
   flex-direction: column;

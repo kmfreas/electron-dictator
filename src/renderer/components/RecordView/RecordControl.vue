@@ -6,12 +6,7 @@
       </v-btn>
       <input type="text" placeholder="Title" v-model="title" class="record-control__title py-2 px-3" maxlength="70">
       <span class="px-2">{{duration}}</span>
-      <span v-if="!credentialsValid && recording">Not saving transcript. Enter your credentials in the settings page.</span>
     </v-card-actions>
-    <v-snackbar :timeout="6000" :bottom="true" :right="true" v-model="showSnackbar">
-      Recording saved
-      <v-btn flat color="primary" @click.native="showSnackbar = false">Close</v-btn>
-    </v-snackbar>
     <v-snackbar color="warning" :timeout="6000" :bottom="true" :right="true" v-model="showInvalidCredentialsSnackbar">
       Credentials invalid
       <v-btn flat @click.native="showInvalidCredentialsSnackbar = false"><router-link to="/settings" class="white--text" style="text-decoration: none">Fix</router-link></v-btn>
@@ -31,9 +26,7 @@ export default {
       title: null,
       timer: new Easytimer(),
       duration: null,
-      showSnackbar: false,
       showInvalidCredentialsSnackbar: false,
-      credentialsValid: true,
     };
   },
   computed: {
@@ -50,17 +43,22 @@ export default {
     });
     Credentials.check().then((errors) => {
       this.showInvalidCredentialsSnackbar = !!errors.length;
-      this.credentialsValid = errors.length === 0;
     });
   },
   methods: {
     handle() {
-      this.recording = !this.recording;
-      if (this.recording) {
-        this.start();
-      } else {
-        this.stop();
-      }
+      Credentials.check().then((data) => {
+        if (!data.errors.length) {
+          this.recording = !this.recording;
+          if (this.recording) {
+            this.start();
+          } else {
+            this.stop();
+          }
+        } else {
+          this.showInvalidCredentialsSnackbar = true;
+        }
+      });
     },
     start() {
       Record.start();

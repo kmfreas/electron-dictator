@@ -1,7 +1,12 @@
 <template>
   <v-layout column>
+    <v-card class="mb-3" color="warning" v-for="error in errors" :key="error">
+      <v-card-text>
+        <b>{{error}}</b>
+      </v-card-text>
+    </v-card>
     <v-card>
-      <v-toolbar color="cyan" dark>
+      <v-toolbar color="primary" dark>
         <v-toolbar-title>Setup</v-toolbar-title>
       </v-toolbar>
       <v-card-text v-show="!show">
@@ -24,7 +29,7 @@
         </v-card-text>
       </v-slide-y-transition>
       <v-card-actions>
-        <v-btn dark @click="saveSettings" color="primary" v-if="show">
+        <v-btn dark @click="saveSettings" color="primary" v-if="show" :loading="loading" :disabled="loading">
           Save
         </v-btn>
         <v-btn @click="show = !show" color="primary" v-if="!show">
@@ -43,6 +48,9 @@
 </template>
 
 <script>
+import path from 'path';
+// eslint-disable-next-line
+import { remote } from 'electron';
 import FileInput from './elements/FileInput';
 import Credentials from '../js/credentials';
 import Record from '../js/record';
@@ -66,30 +74,48 @@ export default {
       valid: true,
       show: null,
       credentialsValid: null,
+      errors: null,
+      loading: false,
     };
   },
   mounted() {
-    Credentials.check().then((errors) => {
-      this.show = !!errors.length;
-      this.credentialsValid = !this.show;
+    Credentials.check().then((data) => {
+      this.handleCredentials(data);
     });
   },
   methods: {
     handleFile(files) {
       this.file = files[0];
     },
+    handleCredentials(data) {
+      this.errors = data.errors;
+      this.show = !!data.errors.length;
+      this.credentialsValid = !this.show;
+      this.bucketName = data.credentials.bucket;
+      this.fileName = data.credentials.file;
+    },
     saveSettings() {
-      if (this.file instanceof File === false) {
+      const credsFile = path.join(remote.app.getPath('userData'), '/user-config/credentials.json');
+      if (this.file instanceof File === false && credsFile !== this.fileName) {
         this.fileName = '';
         this.file = null;
+        return;
       }
 
       if (this.$refs.form.validate()) {
-        Credentials.save(this.file, this.bucketName);
-        this.showSnackbar = true;
-        this.show = false;
-        this.credentialsValid = true;
-        Record.init();
+        this.loading = true;
+        Credentials.save(this.file, this.bucketName).then(() => {
+          Record.init().then(() => {
+            Credentials.check().then((data) => {
+              console.log(data);
+              this.handleCredentials(data);
+              setTimeout(() => {
+                this.loading = false;
+                this.showSnackbar = true;
+              }, 1000);
+            });
+          });
+        });
       }
     },
     open(link) {

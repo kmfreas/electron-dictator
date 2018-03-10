@@ -1,29 +1,56 @@
 import path from 'path';
 // eslint-disable-next-line
 import { remote } from 'electron';
-import fs from 'fs';
+import fs from 'fs-extra';
 import Database from './database';
+import Record from './record';
 
 export default {
   check() {
     return new Promise((resolve) => {
-      const errors = [];
-      if (!fs.existsSync(path.join(remote.app.getPath('userData'), '/user-config/credentials.json'))) {
-        errors.push('Your Google Speech API credentials file is missing.');
-      }
-
-      Database.options.get('bucket_name').then((name) => {
-        if (!name) {
-          errors.push('Your Google Cloud Storage bucket name is missing.');
+      const response = {
+        errors: [],
+        credentials: {
+          saved: null,
+          file: null,
+          bucket: null,
+        },
+      };
+      const credsFile = path.join(remote.app.getPath('userData'), '/user-config/credentials.json');
+      Promise.all([
+        Database.options.get('credentials_saved'),
+        Database.options.get('bucket_name'),
+        fs.existsSync(credsFile),
+        Record.init(),
+      ]).then(([saved, bucket, file]) => {
+        response.credentials.saved = saved;
+        response.credentials.file = file ? credsFile : '';
+        response.credentials.bucket = bucket;
+        if (!file) {
+          response.errors.push('Google Speech API credentials file is missing');
         }
-        resolve(errors);
+        if (!Record.speech || !Record.speech.auth.authClient) {
+          response.errors.push('Google Speech API Unauthenticated');
+        }
+
+        if (!bucket) {
+          response.errors.push('Google Cloud Storage bucket name is missing');
+        }
+        resolve(response);
       });
     });
   },
   save(file, bucketName) {
-    Database.options.update('bucket_name', bucketName);
-    if (file && file.path) {
-      fs.createReadStream(file.path).pipe(fs.createWriteStream(path.join(remote.app.getPath('userData'), '/user-config/credentials.json')));
-    }
+    return new Promise((resolve) => {
+      Database.options.update('bucket_name', bucketName);
+      Database.options.update('credentials_saved', true);
+      if (file && file.path) {
+        fs.createReadStream(file.path)
+          .pipe(fs.createWriteStream(path.join(remote.app.getPath('userData'), '/user-config/credentials.json')))
+          .then(resolve());
+      } else {
+        resolve();
+      }
+    });
   },
 };

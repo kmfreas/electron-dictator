@@ -11,21 +11,29 @@ const Storage = require('@google-cloud/storage');
 
 export default {
   currentFileName: '',
-  client: null,
+  speech: null,
   storage: null,
   bucket: null,
   init() {
-    const credentials = path.join(remote.app.getPath('userData'), '/user-config/credentials.json');
-    if (fs.existsSync(credentials)) {
-      this.client = new speech.SpeechClient({
-        keyFilename: credentials,
+    return new Promise((resolve) => {
+      const credentials = path.join(remote.app.getPath('userData'), '/user-config/credentials.json');
+      if (fs.existsSync(credentials)) {
+        this.speech = new speech.SpeechClient({
+          keyFilename: credentials,
+        });
+        this.storage = new Storage({
+          keyFilename: credentials,
+        });
+      }
+      Database.options.get('bucket_name').then((name) => {
+        this.bucket = name;
       });
-      this.storage = new Storage({
-        keyFilename: credentials,
-      });
-    }
-    Database.options.get('bucket_name').then((name) => {
-      this.bucket = name;
+      const watchAuth = setInterval(() => {
+        if (this.speech && this.storage) {
+          clearInterval(watchAuth);
+          resolve();
+        }
+      }, 50);
     });
   },
   getPath() {
@@ -44,62 +52,81 @@ export default {
   },
   stop(title, duration) {
     let dbTitle = title;
+    const audioFile = `${this.getPath()}.wav`;
+    const audioFileName = `${this.currentFileName}.wav`;
+    const textFile = `${this.getPath()}.txt`;
+
     if (!dbTitle) {
       dbTitle = 'Untitled';
     }
+
     record.stop();
-    const file = `${this.getPath()}.wav`;
-    const filename = this.currentFileName;
-    Database.recordings.insert(dbTitle, `${this.getPath()}.wav`, `${this.getPath()}.txt`, duration).then((doc) => {
-      Bus.$emit('recordingSaved');
-      if (this.client !== null) {
-        this.uploadFile(file).then(() => {
-          setTimeout(() => {
-            this.getTranscription(filename, doc._id); // eslint-disable-line no-underscore-dangle
-          }, 0);
-        }, (err) => {
-          throw err;
+
+    Bus.$emit('processingRecording', dbTitle);
+
+    this.uploadFile(audioFile)
+      .then(() => this.getTranscription(audioFileName))
+      .then(() => Database.recordings.insert(dbTitle, audioFile, textFile, duration))
+      .then((doc) => {
+        Bus.$emit('recordingSaved', doc);
+      })
+      .catch((error) => {
+        Bus.$emit('recordingError', { error, title: dbTitle });
+        fs.unlink(audioFile, (err) => {
+          if (err) throw err;
         });
-      }
-    });
+      });
   },
   uploadFile(file) {
     return new Promise((resolve, reject) => {
       this.storage
         .bucket(this.bucket)
         .upload(file)
-        .then(() => resolve())
-        .catch(err => reject(err));
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
+          console.log(err);
+          reject('upload');
+        });
     });
   },
-  getTranscription(file, id) {
-    this.client
-      .longRunningRecognize({
-        config: {
-          languageCode: 'en-US',
-          encoding: 'LINEAR16',
-          sampleRateHertz: 44100,
-        },
-        audio: {
-          uri: `gs://${this.bucket}/${file}.wav`,
-        },
-      })
-      .then((data) => {
-        const response = data[0];
-        const operation = response;
-        // Get a Promise representation of the final result of the job
-        return operation.promise();
-      })
-      .then((data) => {
-        const response = data[0];
-        const transcription = response.results
-          .map(result => result.alternatives[0].transcript)
-          .join('\n');
-        fs.writeFile(`${this.getPath()}.txt`, transcription, (error) => {
-          if (error) throw error;
-          Bus.$emit('transcriptionSaved', id);
+  getTranscription(file) {
+    return new Promise((resolve, reject) => {
+      this.speech
+        .longRunningRecognize({
+          config: {
+            languageCode: 'en-US',
+            encoding: 'LINEAR16',
+            sampleRateHertz: 44100,
+          },
+          audio: {
+            uri: `gs://${this.bucket}/${file}`,
+          },
+        })
+        .then((data) => {
+          const response = data[0];
+          const operation = response;
+          operation.on('progress', (metadata, apiResponse) => {
+            if (apiResponse.result === null && apiResponse.done) {
+              reject('no-transcript');
+            }
+          });
+          return operation.promise();
+        })
+        .then((data) => {
+          const response = data[0];
+          const transcription = response.results.map(result => result.alternatives[0].transcript).join('\n');
+          fs.writeFile(`${this.getPath()}.txt`, transcription, (error) => {
+            if (error) {
+              reject('transcript-save-fail');
+            }
+            resolve();
+          });
+        })
+        .catch(() => {
+          reject('transcript');
         });
-      })
-      .catch();
+    });
   },
 };
