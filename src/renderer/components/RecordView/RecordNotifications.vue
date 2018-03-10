@@ -1,6 +1,6 @@
 <template>
   <v-flex v-if="processing.length">
-    <v-btn class="ml-0 mt-0 mb-0" :color="record.error ? 'error' : ''" :disabled="!record.error" depressed v-for="(record, index) in processing" :key="index">
+    <v-btn @click="close(record)" class="ml-0 mt-0 mb-0" :color="record.error ? 'error' : ''" :disabled="!record.error" depressed v-for="(record, index) in processing" :key="index">
       <span class="btn__content pa-0" v-if="!record.error">
         <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
         <span class="ml-2">Processing&nbsp;</span>
@@ -8,8 +8,8 @@
           <b class="white--text">{{record.title}}</b>
         </span>
       </span>
-      <v-icon left dark>close</v-icon>
       <span class="btn__content pa-0" v-if="record.error">
+        <v-icon left dark>close</v-icon>
         {{record.title}}
       </span>
     </v-btn>
@@ -56,6 +56,11 @@ export default {
       this.processing[index].error = true;
       this.processing[index].title = msg;
     });
+  },
+  methods: {
+    close(record) {
+      this.processing.splice(this.processing.findIndex(r => r.title === record.title), 1);
+    },
   },
 };
 </script>

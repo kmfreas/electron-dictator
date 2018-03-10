@@ -107,7 +107,6 @@ export default {
         Credentials.save(this.file, this.bucketName).then(() => {
           Record.init().then(() => {
             Credentials.check().then((data) => {
-              console.log(data);
               this.handleCredentials(data);
               setTimeout(() => {
                 this.loading = false;
