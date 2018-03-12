@@ -1,5 +1,5 @@
 <template>
-  <v-flex v-if="processing.length">
+  <v-flex v-if="display">
     <v-btn @click="close(record)" class="ml-0 mt-0 mb-0" :color="record.error ? 'error' : ''" :disabled="!record.error" depressed v-for="(record, index) in processing" :key="index">
       <span class="btn__content pa-0" v-if="!record.error">
         <v-progress-circular indeterminate color="white" size="20"></v-progress-circular>
@@ -25,12 +25,17 @@ export default {
       processing: [],
     };
   },
+  computed: {
+    display() {
+      return this.processing.length;
+    },
+  },
   mounted() {
     Bus.$on('processingRecording', (title) => {
       this.processing.push({ title, error: false });
     });
     Bus.$on('recordingSaved', (record) => {
-      const index = this.processing.indexOf(record.title);
+      const index = this.processing.findIndex(r => r.title === record.title);
       if (index > -1) {
         this.processing.splice(index, 1);
       }
