@@ -32,6 +32,9 @@ const mutations = {
     Object.keys(record).filter(key => key in state.currentRecording).forEach((key) => {
       state.currentRecording[key] = record[key];
     });
+    state.recordings.forEach((r) => {
+      r.active = r._id === record._id;
+    });
   },
 };
 
@@ -59,8 +62,6 @@ const actions = {
       record.url = URL.createObjectURL(blob);
       record.transcript = text;
       context.commit('setCurrentRecording', record);
-    }, (error1, error) => {
-      console.log(error1, error);
     });
   },
 };

@@ -78,7 +78,6 @@ const actions = {
         }
 
         response.valid = !response.errors.length;
-        console.log(response);
         resolve(response);
         context.commit('saveCredentials', response);
       });

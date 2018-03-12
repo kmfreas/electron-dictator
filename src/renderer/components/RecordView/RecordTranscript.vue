@@ -1,5 +1,8 @@
 <template>
   <v-card height="100%">
+    <v-toolbar dark>
+      <v-toolbar-title>{{record.title}}</v-toolbar-title>
+    </v-toolbar>
     <v-card-text>
       {{record.transcript}}
     </v-card-text>

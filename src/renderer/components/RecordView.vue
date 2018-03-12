@@ -7,10 +7,10 @@
     <record-notifications></record-notifications>
     <v-flex fill-height d-flex v-if="recordings.length && credentials.valid">
       <v-layout row wrap style="height: auto !important;">
-        <v-flex xs12 sm6>
+        <v-flex xs12 md6>
           <record-transcript></record-transcript>
         </v-flex>
-        <v-flex xs12 sm6>
+        <v-flex xs12 md6>
           <record-list></record-list>
         </v-flex>
       </v-layout>

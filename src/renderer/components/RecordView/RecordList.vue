@@ -1,18 +1,24 @@
 <template>
   <v-card class="record-list" height="100%">
+    <v-toolbar dark>
+      <v-toolbar-title>Recordings</v-toolbar-title>
+    </v-toolbar>
     <v-list class="record-list__list">
       <template v-for="(record, index) in recordings">
         <v-list-tile avatar :key="record._id" @click="playRecord(index)">
-          <v-list-tile-action>
-            <v-icon v-if="!record.active" :color="record.active ? 'primary' : 'blue-grey'">
-              {{record.active ? 'play_circle_outline' : 'play_arrow'}}
-            </v-icon>
-          </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>
               <div class="record-list__content">
+                <div class="mr-3" v-if="!record.active" style="min-width: 24px; text-align: center; margin-left: -7px;">
+                  {{index + 1}}
+                </div>
+                <div class="mr-3" v-if="record.active" style="margin-left: -7px;">
+                  <v-icon color="primary">
+                    play_arrow
+                  </v-icon>
+                </div>
                 <div class="record-list__title pr-3">
-                  {{record.title}}
+                  <b>{{record.title}}</b>
                 </div>
                 <div class="record-list__date px-3">
                   {{record.createdAt | date}}

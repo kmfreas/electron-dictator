@@ -37,10 +37,6 @@
           </v-slide-y-transition>
         </v-container>
       </v-content>
-      <v-footer :fixed="fixed" app>
-        <v-spacer></v-spacer>
-        <span>&copy; 2017</span>
-      </v-footer>
     </v-app>
   </div>
 </template>
@@ -51,9 +47,8 @@ import { mapActions } from 'vuex';
 export default {
   name: 'electron-transcriber',
   data: () => ({
-    clipped: true,
+    clipped: false,
     drawer: false,
-    fixed: false,
     items: [
       { icon: 'record_voice_over', title: 'Record', to: '/' },
       { icon: 'info', title: 'About', to: '/about' },
@@ -74,9 +69,88 @@ export default {
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons');
-  /* Global CSS */
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons');
 .button--huge {
   height: 88px;
 }
+
+html, body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  overflow: hidden;
+}
+
+#app,
+.theme--light .card,
+.theme--dark .card  {
+  background-image: url('./assets/background.jpg');
+  background-position: center center;
+  background-size: cover;
+  position: relative;
+  background-attachment: fixed;
+}
+.theme--light .card,
+.theme--light .list,
+.theme--dark .card,
+.theme--dark .list,
+.theme--dark .toolbar,
+.application .theme--dark.toolbar {
+  background-color: transparent;
+}
+
+.application .theme--dark.toolbar {
+  background-color: rgba(52, 152, 219, .07);
+}
+
+.theme--dark .toolbar {
+  box-shadow: none;
+}
+
+.theme--light .card,
+.theme--dark .card {
+  overflow: hidden;
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.1), 0px 1px 1px 0px rgba(0,0,0,0.07), 0px 1px 3px 0px rgba(0,0,0,0.06)
+}
+
+.theme--light .card > *,
+.theme--dark .card > * {
+  position: relative;
+  z-index: 1;
+}
+.card::before,
+#app::before,
+.card::after {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  bottom: -5px;
+  left: -5px;
+  content: '';
+}
+#app::before {
+  /* filter: blur(1px); */
+  background: inherit;
+}
+.card::before {
+  background: inherit;
+  filter: blur(10px);
+}
+
+.card::after {
+  background-color: rgba(44,62,80, .05);
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #fafafa;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: #fafafa;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: #fafafa;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: #fafafa;
+}
+
 </style>

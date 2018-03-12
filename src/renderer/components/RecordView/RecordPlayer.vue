@@ -2,12 +2,12 @@
   <v-card class="record-player">
     <div class="record-player__left">
       <v-btn color="primary" flat dark @click="buttonHandle" class="ma-0 button--huge" large :disabled="audio.title === ' '">
-        <v-icon dark>{{icon}}</v-icon>
+        <v-icon>{{icon}}</v-icon>
       </v-btn>
     </div>
     <div class="record-player__right px-5">
       <div class="record-player__title">
-        {{audio.title}}
+        <b>{{audio.title}}</b>
       </div>
       <aplayer :music="audio" mode="order" ref="player" @pause="handlePlayerState(false)" @ended="handlePlayerState(false)" @play="handlePlayerState(true)"></aplayer>
     </div>
@@ -95,5 +95,9 @@ export default {
 
 .aplayer-thumb {
   /* margin-left: -5px !important; */
+}
+.aplayer-controller .aplayer-time.aplayer-time {
+  color: #fff;
+  font-weight: bold;
 }
 </style>

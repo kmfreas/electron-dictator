@@ -6,7 +6,7 @@
       </v-card-text>
     </v-card>
     <v-card>
-      <v-toolbar color="primary" dark>
+      <v-toolbar dark>
         <v-toolbar-title>Setup</v-toolbar-title>
       </v-toolbar>
       <v-card-text v-show="credentials.valid && !showForm">
