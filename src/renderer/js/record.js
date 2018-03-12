@@ -17,6 +17,11 @@ export default {
   init() {
     return new Promise((resolve) => {
       const credentials = path.join(remote.app.getPath('userData'), '/user-config/credentials.json');
+
+      Database.options.get('bucket_name').then((name) => {
+        this.bucket = name;
+      });
+
       if (fs.existsSync(credentials)) {
         this.speech = new speech.SpeechClient({
           keyFilename: credentials,
@@ -24,16 +29,15 @@ export default {
         this.storage = new Storage({
           keyFilename: credentials,
         });
+        const watchAuth = setInterval(() => {
+          if (this.speech && this.storage) {
+            clearInterval(watchAuth);
+            resolve();
+          }
+        }, 50);
+      } else {
+        resolve();
       }
-      Database.options.get('bucket_name').then((name) => {
-        this.bucket = name;
-      });
-      const watchAuth = setInterval(() => {
-        if (this.speech && this.storage) {
-          clearInterval(watchAuth);
-          resolve();
-        }
-      }, 50);
     });
   },
   getPath() {
@@ -85,8 +89,7 @@ export default {
         .then(() => {
           resolve();
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
           reject('upload');
         });
     });

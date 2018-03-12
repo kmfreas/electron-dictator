@@ -50,10 +50,6 @@ const actions = {
   },
   loadRecording(context, index) {
     const record = state.recordings[index];
-    console.log(record);
-    fs.readFile(record.textFile, 'utf8', (err, test) => {
-      console.log(err, test);
-    });
 
     Promise.all([
       fs.readFile(record.audioFile),

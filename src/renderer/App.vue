@@ -46,21 +46,31 @@
 </template>
 
 <script>
-  export default {
-    name: 'electron-transcriber',
-    data: () => ({
-      clipped: true,
-      drawer: false,
-      fixed: false,
-      items: [
-        { icon: 'record_voice_over', title: 'Record', to: '/' },
-        { icon: 'info', title: 'About', to: '/about' },
-        { icon: 'settings', title: 'Settings', to: '/settings' },
-      ],
-      miniVariant: true,
-      title: 'Transcriber',
+import { mapActions } from 'vuex';
+
+export default {
+  name: 'electron-transcriber',
+  data: () => ({
+    clipped: true,
+    drawer: false,
+    fixed: false,
+    items: [
+      { icon: 'record_voice_over', title: 'Record', to: '/' },
+      { icon: 'info', title: 'About', to: '/about' },
+      { icon: 'settings', title: 'Settings', to: '/settings' },
+    ],
+    miniVariant: true,
+    title: 'Transcriber',
+  }),
+  mounted() {
+    this.loadCredentials();
+  },
+  methods: {
+    ...mapActions({
+      loadCredentials: 'loadCredentials',
     }),
-  };
+  },
+};
 </script>
 
 <style>

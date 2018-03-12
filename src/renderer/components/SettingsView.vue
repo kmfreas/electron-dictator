@@ -1,6 +1,6 @@
 <template>
   <v-layout column>
-    <v-card class="mb-3" color="warning" v-for="error in errors" :key="error">
+    <v-card v-if="credentials.data.saved" class="mb-3" color="warning" v-for="error in credentials.errors" :key="error">
       <v-card-text>
         <b>{{error}}</b>
       </v-card-text>
@@ -9,11 +9,11 @@
       <v-toolbar color="primary" dark>
         <v-toolbar-title>Setup</v-toolbar-title>
       </v-toolbar>
-      <v-card-text v-show="!show">
+      <v-card-text v-show="credentials.valid && !showForm">
         Your credentials are correctly setup.
       </v-card-text>
       <v-slide-y-transition>
-        <v-card-text v-show="show">
+        <v-card-text v-show="showForm">
           <p class="headline">Instructions</p>
           <p class="mb-0">
             Create a project on Google Cloud Console and enable the speech API. <v-icon style="cursor:pointer; vertical-align: text-top" class="body-1" color="primary" @click="open('https://cloud.google.com/speech/docs/quickstart')">open_in_new</v-icon>
@@ -29,13 +29,13 @@
         </v-card-text>
       </v-slide-y-transition>
       <v-card-actions>
-        <v-btn dark @click="saveSettings" color="primary" v-if="show" :loading="loading" :disabled="loading">
+        <v-btn dark @click="saveSettings" color="primary" v-if="showForm" :loading="loading" :disabled="loading">
           Save
         </v-btn>
-        <v-btn @click="show = !show" color="primary" v-if="!show">
+        <v-btn @click="showForm = true" color="primary" v-if="!showForm">
           Edit
         </v-btn>
-        <v-btn v-if="show && credentialsValid" @click="show = !show">
+        <v-btn v-if="showForm && credentials.valid" @click="showForm = false" :disabled="loading">
           Cancel
         </v-btn>
       </v-card-actions>
@@ -48,12 +48,11 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
 import path from 'path';
 // eslint-disable-next-line
 import { remote } from 'electron';
 import FileInput from './elements/FileInput';
-import Credentials from '../js/credentials';
-import Record from '../js/record';
 
 export default {
   components: {
@@ -72,16 +71,19 @@ export default {
       ],
       showSnackbar: false,
       valid: true,
-      show: null,
-      credentialsValid: null,
-      errors: null,
+      showForm: null,
       loading: false,
     };
   },
+  computed: {
+    ...mapGetters({
+      credentials: 'getCredentials',
+    }),
+  },
   mounted() {
-    Credentials.check().then((data) => {
-      this.handleCredentials(data);
-    });
+    this.showForm = !this.credentials.valid;
+    this.bucketName = this.credentials.data.bucket;
+    this.fileName = this.credentials.data.file;
   },
   methods: {
     handleFile(files) {
@@ -96,6 +98,7 @@ export default {
     },
     saveSettings() {
       const credsFile = path.join(remote.app.getPath('userData'), '/user-config/credentials.json');
+
       if (this.file instanceof File === false && credsFile !== this.fileName) {
         this.fileName = '';
         this.file = null;
@@ -104,22 +107,27 @@ export default {
 
       if (this.$refs.form.validate()) {
         this.loading = true;
-        Credentials.save(this.file, this.bucketName).then(() => {
-          Record.init().then(() => {
-            Credentials.check().then((data) => {
-              this.handleCredentials(data);
-              setTimeout(() => {
-                this.loading = false;
-                this.showSnackbar = true;
-              }, 1000);
-            });
+        this.store({
+          file: this.file && this.file.path ? this.file : null,
+          bucketName: this.bucketName,
+        })
+          .then(() => this.loadCredentials())
+          .then(() => {
+            setTimeout(() => {
+              this.loading = false;
+              this.showSnackbar = this.credentials.valid;
+              this.showForm = !this.credentials.valid;
+            }, 1000);
           });
-        });
       }
     },
     open(link) {
       this.$electron.shell.openExternal(link);
     },
+    ...mapActions({
+      store: 'storeCredentials',
+      loadCredentials: 'loadCredentials',
+    }),
   },
 };
 </script>

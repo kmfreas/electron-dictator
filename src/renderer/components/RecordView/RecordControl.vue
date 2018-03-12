@@ -15,9 +15,9 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Easytimer from 'easytimer.js';
 import Record from '../../js/record';
-import Credentials from '../../js/credentials';
 
 export default {
   data() {
@@ -36,29 +36,27 @@ export default {
     icon() {
       return this.recording ? 'stop' : 'mic';
     },
+    ...mapGetters({
+      credentials: 'getCredentials',
+    }),
   },
   mounted() {
     this.timer.addEventListener('secondsUpdated', () => {
       this.duration = this.timer.getTimeValues().toString();
     });
-    Credentials.check().then((errors) => {
-      this.showInvalidCredentialsSnackbar = !!errors.length;
-    });
   },
   methods: {
     handle() {
-      Credentials.check().then((data) => {
-        if (!data.errors.length) {
-          this.recording = !this.recording;
-          if (this.recording) {
-            this.start();
-          } else {
-            this.stop();
-          }
+      if (this.credentials.valid) {
+        this.recording = !this.recording;
+        if (this.recording) {
+          this.start();
         } else {
-          this.showInvalidCredentialsSnackbar = true;
+          this.stop();
         }
-      });
+      } else {
+        this.showInvalidCredentialsSnackbar = true;
+      }
     },
     start() {
       Record.start();

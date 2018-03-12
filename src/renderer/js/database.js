@@ -42,20 +42,22 @@ const Database = {
   },
   options: {
     update(field, value) {
-      this.get(field).then((data) => {
-        if (data.length) {
-          Database.db.options.update({
-            field,
-          }, {
-            field,
-            value,
-          });
-        } else {
-          Database.db.options.insert({
-            field,
-            value,
-          });
-        }
+      return new Promise((resolve) => {
+        this.get(field).then((data) => {
+          if (data && data.length) {
+            Database.db.options.update({
+              field,
+            }, {
+              field,
+              value,
+            }, (err, doc) => resolve(doc));
+          } else {
+            Database.db.options.insert({
+              field,
+              value,
+            }, (err, doc) => resolve(doc));
+          }
+        });
       });
     },
     get(field) {
@@ -66,7 +68,7 @@ const Database = {
           if (docs.length && docs[0].value) {
             resolve(docs[0].value);
           } else {
-            resolve('');
+            resolve();
           }
         });
       });
