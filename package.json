@@ -61,6 +61,7 @@
     "axios": "^0.16.1",
     "deepmerge": "^2.1.0",
     "easytimer.js": "^2.1.0",
+    "fix-path": "^2.1.0",
     "fs-extra": "^5.0.0",
     "moment": "^2.20.1",
     "nedb": "^1.8.0",
