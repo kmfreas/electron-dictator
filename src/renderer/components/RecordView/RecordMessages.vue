@@ -9,7 +9,7 @@
       </v-card-text>
       <v-card-actions>
         <v-btn @click="openSettings">
-          Fix Credentials
+          <span v-if="credentialErrors">Fix&nbsp;</span><span v-if="welcome">Add&nbsp;</span> Credentials
         </v-btn>
       </v-card-actions>
     </v-card>
