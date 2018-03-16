@@ -1,5 +1,5 @@
 <template>
-  <v-layout column align-content-start justify-start>
+  <v-layout column align-content-start justify-start v-if="credentials && credentials.loaded">
     <record-messages v-if="!credentials.valid"></record-messages>
     <v-flex class="shrink" v-if="credentials.valid">
       <record-control></record-control>

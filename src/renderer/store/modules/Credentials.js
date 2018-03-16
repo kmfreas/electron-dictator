@@ -14,6 +14,7 @@ const credsFormat = {
     bucket: null,
   },
   valid: null,
+  loaded: null,
 };
 
 const state = {
@@ -50,11 +51,6 @@ const actions = {
   },
   loadCredentials(context) {
     return new Promise((resolve) => {
-      const response = {
-        errors: [],
-        data: {},
-        valid: null,
-      };
       const credsFile = path.join(remote.app.getPath('userData'), '/user-config/credentials.json');
       Promise.all([
         Database.options.get('credentials_saved'),
@@ -62,9 +58,16 @@ const actions = {
         fs.existsSync(credsFile),
         Record.init(),
       ]).then(([saved, bucket, file]) => {
-        response.data.saved = saved;
-        response.data.file = file ? credsFile : '';
-        response.data.bucket = bucket;
+        const response = {
+          errors: [],
+          data: {
+            saved,
+            file: file ? credsFile : '',
+            bucket,
+          },
+          valid: null,
+          loaded: true,
+        };
 
         if (!file) {
           response.errors.push('Google Speech API credentials file is missing');
