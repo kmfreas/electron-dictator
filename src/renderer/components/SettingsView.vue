@@ -39,11 +39,11 @@
           Cancel
         </v-btn>
       </v-card-actions>
-      <v-snackbar :timeout="6000" :bottom="true" v-model="showSnackbar">
-        Settings saved
-        <v-btn flat color="primary" @click.native="showSnackbar = false">Close</v-btn>
-      </v-snackbar>
     </v-card>
+    <v-snackbar :timeout="6000" :bottom="true" v-model="showSnackbar">
+      Settings saved
+      <v-btn flat color="primary" @click.native="showSnackbar = false">Close</v-btn>
+    </v-snackbar>
   </v-layout>
 </template>
 
