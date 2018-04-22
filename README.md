@@ -1,6 +1,19 @@
-# electron-transcriber
+# Electron Transcriber
 
 > A tool to provide transcriptions of your audio recordings
+
+![screenshot](https://raw.githubusercontent.com/kmfreas/electron-transcriber/vuetify/docs/transcriber.jpg)
+
+> Installation Requirements:
+1) Install SOX. Via homebrew: ``` brew install sox ```
+2) Create a Google Cloud Console project.
+3) Enable Google Cloud Storage and Speech APIs for the project.
+4) Create a Google Cloud service account, grant it access to Storage and Speech APIs, and [create](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) a key via the console.
+5) Create a bucket in Google Storage.
+6) When prompted by Transcriber, insert the bucket name and the Cloud service account key.
+
+[Download Mac App &rarr;](https://drive.google.com/uc?export=download&id=1OcESjxgVvZZdPuMMunctZ8B1yjufNe_r)
+
 
 #### Build Setup
 
